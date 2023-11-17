@@ -6,13 +6,13 @@ tags: [스프링, 캐시, Lovebird]
 
 --- 
 
-## 1. 서론
+## 서론
 
 &nbsp; `Lovebird` 프로젝트를 진행하다가 개선할 필요가 있어보이는 로직이 있어서 해결 후 포스팅을 하게 되었다. Lovebird는 `커플 다이어리` 도메인의 앱인데, D-Day를 불러오는 부분에서 고민을 하게 되었다. 일반적인 방법인 DB에서 읽어오는 식으로 구현하면 어플을 실행할 때마다, 또는 해당 탭을 킬 때마다 `SELECT` 동작이 반복된다. 이는 크지만 않지만 DB 부하뿐만 아니라 READ 비용까지 증가시킨다. 따라서 이를 막기 위해 `Cache`를 활용하기로 했다.
 
 <br>
 
-## 2. 기존 로직
+## 기존 로직
 
 &nbsp; 유저가 HOME 화면이나 Profile 화면을 로드했을 때 Service 레이어의 `findMemberByNickname()` 메서드가 실행된다. 기존에는 Repository의 메서드를 이용해 해당 로직을 수행했다.
 
@@ -27,7 +27,7 @@ tags: [스프링, 캐시, Lovebird]
 
 <br>
 
-## 3. Cache와 Caffeine Cache
+## Cache와 Caffeine Cache
 
 > 캐시(cache) : 데이터나 값을 미리 복사해 놓는 임시 장소
 
@@ -55,7 +55,7 @@ tags: [스프링, 캐시, Lovebird]
 
 <br>
 
-## 4. Caffeine Cache 적용하기
+## Caffeine Cache 적용하기
 
 > ### i) dependency 추가
 
@@ -84,8 +84,6 @@ public enum CacheType {
 - 현재는 하나 밖에 없지만, 이후 확장을 고려하여 enum으로 생성
 - `expireAfterWrite` : 항목이 생성된 후 또는 해당 값을 가장 최근에 바뀐 후 특정 기간이 지나면 각 항목이 캐시에서 자동으로 제거되도록 지정
 - `maximumSize` : 캐시에 포함할 수 있는 최대 엔트리 수 지정
-
-<br>
 
 > ### iii) Cache 세팅
 
@@ -121,8 +119,6 @@ public class CacheConfig {
   - `maximumSize`
      - 캐시에 포함할 수 있는 최대 엔트리 수 지정
 
-<br>
-
 > ### iv) 로직 수정
 
 ```java
@@ -143,7 +139,7 @@ public class CacheConfig {
 
 <br>
 
-## 5. Test
+## Test
 
 &nbsp; Spring에서는 AOP Proxy가 `@Cacheable`을 처리해준다. 따라서 메서드 실행 전에 프록시 객체가 요청된 메서드의 결과가 캐싱돼 있는지 확인하게 된다. 이러한 동작을 하는 객체가 `CacheInterceptor`다.
 
@@ -169,10 +165,6 @@ public class CacheConfig {
     }
     . . .
 ```
-
-<br>
-
----
 
 <br>
 
