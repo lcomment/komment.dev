@@ -1,5 +1,5 @@
 ---
-title: [(Spring Boot) S3 Presigned URL을 활용활용하여 요청 크기를 줄이자]
+title: [(Spring Boot) S3 Presigned URL을 활용하여 요청 크기를 줄이자]
 date: 2023-11-17 15:33:44 +09:00
 categories: [Spring, 트러블 슈팅]
 tags: [스프링, aws, s3, presigned url, Lovebird]
@@ -208,6 +208,6 @@ public class PresignedUrlProviderTest {
 }
 ```
 
-&nbsp; 테스트를 돌려보면 다음과 같이 PASS된 것을 확인할 수 있다.
+&nbsp; 테스트를 돌려보면 다음과 같이 PASS된 것을 확인할 수 있다. 추가적으로 **하나의 Presigned URL은 하나의 파일에만 사용**되니 여러 파일을 업로드할 때는 여러 Presigned URL을 발급 받아야 한다. 
 
 ![20231117-1](/assets/img/posts/20231117-1.png)
