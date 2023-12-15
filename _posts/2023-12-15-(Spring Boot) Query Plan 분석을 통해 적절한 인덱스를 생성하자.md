@@ -48,7 +48,7 @@ tags: [Lovebird, 스프링, 인덱스, postgresql]
 
 &nbsp; 간단하게 생각하고 개발한 후 PR을 올렸고, [@태용](https://github.com/YongsHub)님의 리뷰를 받고 **아차!** 싶었다. index나 scan에 대해서 전혀 고려하지 않고 구현한 것이다. 리뷰의 내용은 다음과 같고, 이를 기반으로 문제 상황과 고려했던 방안에 대해 정의해 보았다.
 
-<img src='../assets/img/posts/20231215-1.png' width = 400>
+![20231215-1.png](/assets/img/posts/20231215-1.png)
 
 &nbsp; 일반적으로 query 성능을 개선하기 위해 인덱스를 활용하고 있고, Lovebird팀의 다이어리 페이지 조회 또한 인덱스를 생성 및 활용하려 한다. 문제는 타임라인 특성상 `memory_date`를 기준으로 조회를 해야하는데, 하루에 일기를 여러 개 작성할 수 있으므로, memory 컬럼의 카디널리티는 하루에 작성하는 일기 갯수와 반비례하여 낮아진다. 일반적으로 카디널리티가 낮은 컬럼에 대해서는 인덱스 효율이 떨어지기 때문에 테스트 이전에 두 가지 방안을 세워보았다.
 
@@ -88,7 +88,7 @@ FROM generate_series(1, 1000000) as n;
 
 &nbsp; Dummy Data를 삽입한 후의 Query Plan은 다음과 같다.
 
-<img src='../assets/img/posts/20231215-2.png' width = 600>
+![20231215-2.png](/assets/img/posts/20231215-2.png)
 
 &nbsp; 10만 건의 데이터를 기준으로, `memory_date`에 대한 index를 생성했더라도 `Seq Scan`으로 동작하는 것을 확인할 수 있었다. 
 
@@ -105,7 +105,7 @@ ON diary (diary_id, memory_date);
 
 &nbsp; 위와 같이 인덱스를 생성한 후의 Query Plan은 다음과 같다.
 
-<img src='../assets/img/posts/20231215-4.png' width = 600>
+![20231215-4.png](/assets/img/posts/20231215-2.png)
 
 &nbsp; 실행 시간은 이전보다 커졌지만, 이는 memory_date의 다양화를 위해 Query 실행 이전에 데이터를 더 추가했기 때문에 크게 고려할 사항은 아니라고 생각 들었다. 이 Query Plan에서 포인트는 Index Scan에서 diary_id와 memory_date를 이용한 `multiple column index를 활용하지 않는다는 점`이다.
 
@@ -127,7 +127,7 @@ LIMIT 10;
 
 &nbsp; 위 Query를 실행시켰을 때의 Query Plan이다. 
 
-<img src='../assets/img/posts/20231215-3.png' width = 600>
+![20231215-3.png](/assets/img/posts/20231215-3.png)
 
 &nbsp; diary_image에서는 Parallel 하게 `Full Scan`을 하지만, Diary를 가져올 때는 Index Condition이 걸려서 `Index Scan`을 하는 것을 확인할 수 있다. 따라서 `행동 3`을 채택하기로 하였고, 추가적으로 diary_image에 대한 인덱스로 살펴보도록 하겠다.
 
@@ -146,7 +146,7 @@ ON diary_image(diary_id);
 
 &nbsp; 위와 같은 인덱스를 생성한 후 실행했을 때의 Query Plan은 다음과 같다.
 
-<img src='../assets/img/posts/20231215-5.png' width = 600>
+![20231215-5.png](/assets/img/posts/20231215-5.png)
 
 &nbsp; Execution Time이 대폭 줄어든 것을 확인할 수 있었다. 이를 통해 초기의 `Seq Scan * Seq Scan`에서 `Index Scan * Index Scan`으로 성능을 향상 시킬 수 있었다.
 
