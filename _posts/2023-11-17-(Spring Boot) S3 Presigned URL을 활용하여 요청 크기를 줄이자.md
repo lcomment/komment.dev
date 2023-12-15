@@ -2,7 +2,7 @@
 title: [(Spring Boot) S3 Presigned URL을 활용하여 요청 크기를 줄이자]
 date: 2023-11-17 15:33:44 +09:00
 categories: [Spring, 트러블 슈팅]
-tags: [스프링, aws, s3, presigned url, Lovebird]
+tags: [Lovebird, 스프링, aws, s3, presigned url]
 
 --- 
 

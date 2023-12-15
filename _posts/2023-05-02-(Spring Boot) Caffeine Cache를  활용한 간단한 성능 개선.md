@@ -2,7 +2,7 @@
 title: [(Spring Boot) Caffeine Cache를  활용한 간단한 성능 개선]
 date: 2023-05-02 15:33:44 +09:00
 categories: [Spring, 트러블 슈팅]
-tags: [스프링, 캐시, Lovebird]
+tags: [Lovebird, 스프링, 캐시]
 
 --- 
 
