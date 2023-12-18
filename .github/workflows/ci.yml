@@ -1,19 +1,19 @@
 name: "CI"
-on:
-  push:
-    branches-ignore:
-      - "production"
-      - "docs"
-    paths-ignore:
-      - ".github/**"
-      - "!.github/workflows/ci.yml"
-      - ".gitignore"
-      - "docs/**"
-      - "README.md"
-      - "LICENSE"
-  pull_request:
-    paths:
-      - "**"
+# on:
+#   push:
+#     branches-ignore:
+#       - "production"
+#       - "docs"
+#     paths-ignore:
+#       - ".github/**"
+#       - "!.github/workflows/ci.yml"
+#       - ".gitignore"
+#       - "docs/**"
+#       - "README.md"
+#       - "LICENSE"
+#   pull_request:
+#     paths:
+#       - "**"
 
 jobs:
   build:
