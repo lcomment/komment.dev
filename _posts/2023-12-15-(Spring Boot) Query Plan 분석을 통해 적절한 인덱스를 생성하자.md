@@ -105,9 +105,9 @@ ON diary (diary_id, memory_date);
 
 &nbsp; 위와 같이 인덱스를 생성한 후의 Query Plan은 다음과 같다.
 
-![20231215-4.png](/assets/img/posts/20231215-2.png)
+![20231215-4.png](/assets/img/posts/20231215-4.png)
 
-&nbsp; 실행 시간은 이전보다 커졌지만, 이는 memory_date의 다양화를 위해 Query 실행 이전에 데이터를 더 추가했기 때문에 크게 고려할 사항은 아니라고 생각 들었다. 이 Query Plan에서 포인트는 Index Scan에서 diary_id와 memory_date를 이용한 `multiple column index를 활용하지 않는다는 점`이다.
+&nbsp; 실행 시간은 커졌지만, 이는 memory_date의 다양화를 위해 Query 실행 이전에 데이터를 더 추가했기 때문에 크게 고려할 사항은 아니라고 생각 들었다. 이 Query Plan에서 포인트는 Index Scan에서 diary_id와 memory_date를 이용한 `multiple column index를 활용하지 않는다는 점`이다.
 
 <br>
 
