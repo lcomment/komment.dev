@@ -130,7 +130,7 @@ tags: [kotlin, kotest, Lovebird, 스프링, rest docs]
 					)
 				)
 		    )
-	    }
+	}
 ```
 
 &nbsp; Response에 대한 검증 부분은 그렇다 치더라도 Rest Docs 작성법은 다음과 같은 문제점이 있었다.
