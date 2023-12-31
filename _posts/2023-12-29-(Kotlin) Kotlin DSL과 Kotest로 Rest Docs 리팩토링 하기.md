@@ -90,7 +90,7 @@ tags: [kotlin, kotest, Lovebird, 스프링, rest docs]
 
 &nbsp; Kotest 덕분에 테스트 코드가 이뻐졌다(?). 하지만 아직도 말썽인 것이 있었다. 바로 `Rest Docs`다. 아래는 DescribeSpec 스타일로 작성된 Rest Docs 코드 중 `It` 부분의 코드다.
 
-```Kotlin
+```kotlin
 . . .
     it("200 OK") {
 	    every { presignedUrlService.getDiaryPresignedUrls(requestBody.toParam(1L)) } returns response
