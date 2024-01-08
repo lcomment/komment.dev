@@ -6,7 +6,9 @@ tags: [Lovebird, 스프링, 멀티모듈]
 image: /assets/img/posts/20240106-0.png
 ---
 
-&nbsp; 이 포스팅은 2024년 1월 6일 토요일, `Prography 네트워킹 세미나`에서 발표한 내용 입니다.
+<br>
+
+> ### 이 포스팅은 2024년 1월 6일 토요일, `Prography 네트워킹 세미나`에서 발표한 내용 입니다. 포스팅과 관련된 코드는 [Lovebird 서버 Github](https://github.com/wooda-ege/lovebird-server)에 저장돼 있습니다.
 
 <br>
 
