@@ -1,9 +1,14 @@
 ---
 title: [(Spring Boot) 사이드 프로젝트에 멀티 모듈을 도입한 건에 대하여]
-date: 2024-01-05 14:30:44 +09:00
+date: 2024-01-07 14:30:44 +09:00
 categories: [Spring, 리팩토링]
 tags: [Lovebird, 스프링, 멀티모듈]
+image: /assets/img/posts/20240106-0.png
 ---
+
+&nbsp; 이 포스팅은 2024년 1월 6일 토요일, `Prography 네트워킹 세미나`에서 발표한 내용 입니다.
+
+<br>
 
 ## 서론: Lovebird 이야기
 
@@ -63,6 +68,8 @@ tags: [Lovebird, 스프링, 멀티모듈]
 
 &nbsp; 그래서 다시 고민해보았다. `모듈을 구성할 때 가장 중요한 것은 무엇일까?` 그렇게 내린 결론은 `제약을 두고 각 계층의 책임과 역할을 명확히 하자` 였다.
 
+<br>
+
 ## 행동 (Action): 멀티모듈 설계와 구현
 
 > ### 행동 1: 모듈 분리 기준
@@ -102,12 +109,16 @@ tags: [Lovebird, 스프링, 멀티모듈]
   - 시스템과 연관성을 가지며 외부 시스템과의 통신 담당
   - WebClient, 관련 DTO
 
+![20240106-11.png](/assets/img/posts/20240106-11.png)
+
 **_애플리케이션 모듈_**
 
 - 독립적으로 실행 가능한 계층
 - 시스템 비즈니스 로직을 가짐
 - 다른 모듈들을 조합하여 비즈니스 구성
 - Internal Api 모듈, Batch 모듈
+
+![20240106-12.png](/assets/img/posts/20240106-12.png)
 
 **_외부 모듈_**
 
@@ -119,4 +130,53 @@ tags: [Lovebird, 스프링, 멀티모듈]
 
 > ### 행동 3: 의존 관계 개방•폐쇄하기
 
+&nbsp; 라이브러리 종속성을 추가할 때도 개방과 폐쇄를 고려해야 한다. 그렇다면 `implementation`과 `api` 중 어떤 걸 써야 할까?
+
+![20240106-13.png](/assets/img/posts/20240106-13.png)
+
+&nbsp; 공식 문서에는 위와 같이 가능한 `api`가 아닌 `implementation`을 사용하라고 쓰여 있다. 그 이유를 알기 위해 child-module과 parent-module을 임의로 생성하여 테스트를 진행했다.
+
+![20240106-14.png](/assets/img/posts/20240106-14.png)
+
+&nbsp; 위와 같이 child-module에 한번은 implementation, 또 한번은 api를 활용하여 의존성을 추가해 보았다. 그 결과, implementation과 api 모두 `compileClassPath`, `testCompileClassPath`, `runtimeClassPath`, `testRuntimeClassPath`에 추가되고 있음을 확인할 수 있었다.
+
+![20240106-15.png](/assets/img/posts/20240106-15.png)
+
+&nbsp; 다음은 parent-module에 child 모듈 의존성을 추가해보았다. 
+
+![20240106-16.png](/assets/img/posts/20240106-16.png)
+
+&nbsp; 그 결과, api를 사용한 경우엔 동일하게 `compileClassPath`, `testCompileClassPath`, `runtimeClassPath`, `testRuntimeClassPath`에 추가되었지만, implementation을 사용한 경우엔 `runtimeClassPath`, `testRuntimeClassPath`에만 추가됨을 확인할 수 있었다. 따라서 implementation을 활용했을 때 다음과 같은 이점을 취할 수 있다.
+
+- 불필요한 의존성 전파 방지
+- compileClassPath 의존성 충돌 방지
+- 하위 모듈에서 의존성을 변경해도 상위 모듈 재컴파일 X
+- 컴파일 속도 향상
+
+&nbsp; 물론 implementation만 잘 활용한다고 개방과 폐쇄에 대해 완벽히 설계했다고 할 수 없다. 라이브러리 종속성을 추가할 때는 최소한의 라이브러리인지 항상 생각하고 추가하도록 하자.
+
+<br>
+
 ## 결과 (Result): 멀티모듈 도입이 가져온 영향과 결론
+
+![multi-module](https://github.com/wooda-ege/lovebird-server/assets/56003992/e45b1ce3-fcd0-4aa5-98bd-1a6a0661b39d)
+
+&nbsp; Lovebird 서버의 최종 멀티모듈 구조이다. Batch 서버 개발 진행중 및 External 서버 미분리 등 아직 동일하게 구현돼있지는 않지만, 최종적으로 나아갈 구조이다. (도메인 별 모듈 분리는 아직 도메인 자체를 분리할 필요는 없다고 판단하여 고려하지 않았다.)
+
+> ### 멀티모듈 도입이 가져온 이점
+
+![20240106-17.png](/assets/img/posts/20240106-17.png)
+
+&nbsp; 멀티모듈을 도입하면서 우리는 재사용성과 확장성을 보장 받았고, 프로젝트 관리 및 유지보수가 수월해졌으며, 빌드 속도가 개선되고 배포가 수월해지는 이점을 취할 수 있었다.
+
+> ### 결론: 사이드 프로젝트에 멀티 모듈을 도입하는 것이 맞을까 ?
+
+&nbsp; 주관적인 의견으로는 `NO !` 이다. 멀티모듈은 아키텍처나 디자인 패턴이 아니다. 초기 설계 과정에서 많은 비용이 들고, 제대로 활용하지 못한다면 멀티모듈은 무용지물이 될 것이다. 따라서 MVP를 개발할 때가 아닌 리팩토링 과정, 또는 도메인에 대한 확실한 이해가 있을 때 멀티 모듈 도입에 대하여 고민해보자.
+
+<br>
+
+### Reference
+
+- [우아한 Tech 블로그](https://techblog.woowahan.com/2637/)
+- [@hudi](https://hudi.blog/why-use-multi-module/)
+- [@cofls6581](https://cofls6581.tistory.com/274)
